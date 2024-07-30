@@ -1,8 +1,8 @@
 const dataTraining = [
     // [1,0,1,0],
     // [1,0,0,1],
-    [1,0],
-    [0,1],
+    [1,1,1,1],
+    // [0,0,1,1],
 ]
 
 //fungsi sigmoid
@@ -11,20 +11,27 @@ function sigmoid(x) {
 }
 
 const solusi = [    
-    -1.9449416943264184,   1.2451671357687522, -0.08788130420929699,
-       0.9493132046546577,   1.3863532072091416,    1.061683557795103,
-       1.4979677303413783,  0.35620718037727805,                    2,
-      0.22648981408158336,   0.6658814331180448,                    2,
-       1.4548998297077895,  -0.3530749266214922,                   -2,
-      -1.3394645498187203, -1.82487223090000023, 0.00234234242423,
-      -1, -0.0023423423424234, 0.234234234234234324, -2
+    0.8580709705242944,  1.9322172710649665,
+    0.841127858664529,  0.6692742792165385,
+    1.3734697269285334,  0.2159824089692126,
+    -1.4580690998511239, 0.23025280563504325,
+    -1.4305822693019783,  1.7373124472602708,
+    -0.7031070734276117,  1.5510017265599183,
+    -0.9597831017934357,  -1.038658327716047,
+    -0.5442618685876512, 0.20514150998107183,
+    -0.7042500918750898,  1.8449459855869312,
+    1.2675711920144854, 0.20636018034862058,
+    -0.2759784711773845,  1.0118542381175883,
+    -1.3109958124363077,   1.674344077608997,
+    -0.4110495401405414,   1.276379285681191,
+    -1.3315612696567616
 ];
 
-function feedforward(data, solusi, hidden, output, bias ) {
+function feedforward(data, solusi, hidden, output ) {
     // console.log('------------------------KERJAKAN FEEDFORWARD------------------------')
     let _solution = solusi;
     let _dtTraining = data;
-    const _bias = bias
+    const _bias = 1;
     const _input = _dtTraining.length; //mendapatkan nilai jumlah nilai inputan dalam data training
     const _hidden = hidden;
     const _output = output;
@@ -55,10 +62,12 @@ function feedforward(data, solusi, hidden, output, bias ) {
     }
     // pisahkan terlebih dahulu bias ke hidden
     // sisa dari _vsLayerOne merupakan variabel solusi dari input ke hidden layer
-    let _total_vs_biasToHidden = _total_vsLayerOne - _inputToHidden; //jumlah bias ke hidden layer
+    // let _biasToHidden = _total_vsLayerOne - _inputToHidden; //jumlah bias ke hidden layer == _biasToHidden
+    // console.log(_biasToHidden)
     // vektor solusi input layer 
-    let _final_vs_inputToHidden = getInputWeight(_solution.slice(_total_vs_biasToHidden, _total_vsLayerOne), _input); //vektor solusi input ke hidden
-    
+    let _final_vs_inputToHidden = getInputWeight(_solution.slice(_biasToHidden, _total_vsLayerOne), _input); //vektor solusi input ke hidden
+    // console.log(_final_vs_inputToHidden);
+    // asdasd
     //================================================================
     // membagi vektor solusi layer pertama dan kedua
     let _vsLayerTwo = _solution.slice(_total_vsLayerOne);
@@ -74,6 +83,7 @@ function feedforward(data, solusi, hidden, output, bias ) {
     }
 
     let _final_vs_hiddenToOutput = getInputWeight(_solution.slice(_total_vsLayerOne + _total_vs_hiddenToOutput, solusi.length), hidden); // mendapatkan vektor solusi  hidden ke output
+    // console.log(_final_vs_hiddenToOutput)
 
     // menjalankan fungsi aktivasi sebanyak jumlah hidden layer
     // nilai bias akan ditambahkan dengan hasil kali antara nilai input dengan nilai antara bobot input ke hidden
@@ -83,7 +93,10 @@ function feedforward(data, solusi, hidden, output, bias ) {
         for (let j = 0; j < data.length; j++){
             activation1 += data[j] * _final_vs_inputToHidden[i][j]
         }
+        // console.log(activation1)
+        // asdfsaf
         _z_in.push(sigmoid(activation1));
+        // console.log(_z_in)
     }
 
     // menjalankan fungsi aktivasi sebanyak jumlah output layer
@@ -97,7 +110,11 @@ function feedforward(data, solusi, hidden, output, bias ) {
         }
         _z.push(sigmoid(activation2))
     }
-    return _z;
+    // return _z;
+    let fmin = Math.min(..._z);
+    return fmin;
+    console.log(`nilai _z = ${_z}`)
+    console.log(`fmin nilai _z = ${fmin}`)
 }
 
 function getInputWeight(data, size) {
@@ -118,9 +135,9 @@ function getInputWeight(data, size) {
 function testing (){   
     
     for (let i = 0; i < dataTraining.length; i++){
-        const hasil_testing = feedforward(dataTraining[i], solusi, 4, 2, 1);
-        // console.log(hasil)
-        console.log(`data ${i+1} = ${hasil_testing}`);
+        const hasil_testing = feedforward(dataTraining[i], solusi, 3, 3, 1);
+        // console.log(hasil_testing)
+        // console.log(`data ${i+1} = ${hasil_testing}`);
     }
 }
 const test = testing();
