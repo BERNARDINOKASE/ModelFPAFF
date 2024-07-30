@@ -4,9 +4,10 @@ function fpaDemo(para = [20, 0.8]) {
     const N_iter = 100;  // Iterasi
 
     const dataTraining = [
-        [1,1,1,1]
-        // [1,1,1,1],
-        // [0,0,1,1],
+        [1,0,0,1],
+        [0,0,1,1],
+        [0,0,1,0],
+        [1,0,1,0],
     ]
     const input = dataTraining[0].length;
     const hidden = 3;
@@ -18,29 +19,35 @@ function fpaDemo(para = [20, 0.8]) {
     let Sol = [];
     let Fitness = [];
 
+    // bangkitkan populasi dengan solusi acak,
+    // jumlah dimensi berpengaruh untuk nilai solusi awal pembangkitan populasi
+    // nilai solusi baru diproses dengan fungsi feedforward untuk mendapatkan nilai
+    // Fitness sementara
+    // nilai Fitness sementara disimpan pada variabel Fitness
     for (let i = 0; i < n; i++) {
         Sol[i] = Lb.map((lb, index) => lb + (Ub[index] - lb) * Math.random());
         // console.log(`nilai Solusi ke ${i+1} = ${Sol[i]}`);
         Fitness[i] = feedforward(dataTraining[0], Sol[i], hidden, output);
-        console.log(`nilai fitnes ke ${i+1} = ${Fitness[i]}`);
+        // console.log(`nilai fitnes ke ${i+1} = ${Fitness[i]}`);
     }
     
     // console.log(`Solusi = ${Sol}`);
     let fmin = Math.min(...Fitness); //mendapatkan nilai fitnes terkecil dari setiap fitnes dalam populasi
-    console.log(`\nnilai Fitnes Min: ${fmin}`);
-    asdadasd
     let best = Sol[Fitness.indexOf(fmin)];  //mendapatkan nilai solusi dari fitnes terkecil
-    console.log(`fmin = ${fmin}`);
-    // console.log(`\nnilai best: ${best}`);
+    // console.log(`\nnilai Fitnes Min: ${fmin}`);
+    let indexFmin = Fitness.indexOf(fmin) ; //mendapatkan nilai index populasi
+    console.log(`fmin = ${fmin} pada index ke ${indexFmin+1}\nbest = ${best}`);
     let S = [...Sol];
     // console.log(`\n Solusi: ${S}\n========================================================================================================================================`);
 
     for (let t = 0; t < N_iter; t++) {
+        console.log(`               ITERASI ${t+1}`)
         for (let i = 0; i < n; i++) {
+            console.log(`                                       POPULASI ${i+1}`)
             // console.log(`\niterasi ${t+1} --- populasi ${i+1}`);
             let randomP = Math.random();
             // console.log(`\nnilai random p = ${randomP}`);
-            if (randomP < p) { 
+            if (randomP < p) { // satu populasi hanya menggunakan 1x random p
                 // console.log(`\nnilai random p = ${randomP}`);
                 let L = Levy(d);
                 // console.log(`\nNilai Levy Flight ke ${t}, ${i}: ${L}`)
@@ -50,15 +57,23 @@ function fpaDemo(para = [20, 0.8]) {
                 // console.log(`\nNilai S-${i} = ${S[i]}`);
                 S[i] = simpleBounds(S[i], Lb, Ub);
                 // console.log(`Global Pollination\nNilai Sol[${t}, ${i}] = ${S[i]}`);
+                // console.log(`===HASIL PENYERBUKAN GLOBAL===\niterasi ${t+1} populasi ${i+1}`);
+                // console.log(S[i])
             } else {
+                // console.log('|||PENYERBUKAN LOKAL|||')
                 let epsilon = Math.random();
                 let JK = shuffle([...Array(n).keys()]);
                 S[i] = S[i].map((s, index) => s + epsilon * (Sol[JK[0]][index] - Sol[JK[1]][index]));
                 S[i] = simpleBounds(S[i], Lb, Ub);
                 // console.log(`\nLocal Pollination\nNilai Sol[${t}, ${i}] = ${S[i]}`);
             }
+            let Fnew = 0;
+            for (let j = 0; j < dataTraining.length; j++) {
+                // console.log(`data ke ${j+1}`)
+                Fnew = feedforward(dataTraining[j], Sol[i], hidden, output);
+                console.log(`data ${j+1}\n nilai Fnew = ${Fnew}`)
+            }
             
-            let Fnew = feedforward(dataTraining, Sol[i], hidden, output);
             // console.log(`----------------------------------------------------------------`)
             // console.log(`nilai Fitnes [${t}, ${i}] = ${Fitness[i]}`);
             // console.log(`nilai Fnew [${t}, ${i}] = ${Fnew}`);
@@ -82,7 +97,10 @@ function fpaDemo(para = [20, 0.8]) {
                 // console.log(`nilai best [${t}, ${i}] = ${best}`);
                 // console.log(`nilai Fnew [${t}, ${i}] = ${Fnew}`);
             }
-            console.log(`iterasi ${t+1} populasi ${i+1} || best solusi : ${Sol[i]} || Fmin = ${fmin}`);
+            console.log(`Fmin = ${fmin}`);
+            console.log(`Best Solusi =`);
+            // console.log(best);
+            // console.log(`iterasi ${t+1} populasi ${i+1} || best solusi : ${Sol[i]} || Fmin = ${fmin}`);
             // console.log(`nilai Fitnes [${t}, ${i}] = ${Fitness[i]}`);
             // console.log(`Iterasi ${t} Populasi ${i} Posisi terbaik ${best} nilai fungsi baru ${Fnew}`)
         }
@@ -210,7 +228,7 @@ function feedforward(data, solusi, hidden, output ) {
     // menjalankan fungsi aktivasi sebanyak jumlah output layer
     // nilai bias akan ditambahkan dengan hasil kali antara nilai aktivasi pada hidden layer
     // dengan nilai bobot antara hidden ke output layer
-    let _z = [];
+    let _z = []; // menampung nilai aktivasi dari hidden ke output layer
     for (let i = 0; i < output; i++){
         let activation2 = _vsLayerTwo[i]
         for (let j = 0; j < _z_in.length; j++){ 
