@@ -234,7 +234,7 @@ function sigmoid(x) {
 }
 
 function Fun(data, solusi, hidden, output ) {
-    // console.log('------------------------KERJAKAN FEEDFORWARD------------------------')
+    // console.log('------------------------INISIALISASI PARAMETER------------------------')
     let _solution = solusi;
     let _dtTraining = data;
     const _bias = 1;
@@ -303,12 +303,8 @@ function feedforward(hiddenLayer, data, vektorSolusi1, vektorSolusiInputToHidden
     for (let i = 0; i < hiddenLayer; i++){
         let activation1 = vektorSolusi1[i]
         for (let j = 0; j < data.length; j++){
-            // console.log(j)
-            // console.log(data[i][j])
             activation1 += data[j] * vektorSolusiInputToHidden[i][j]
         }
-        // console.log(activation1)
-        // asdasdas
         _z_in.push(sigmoid(activation1));
         
     }
