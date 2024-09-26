@@ -1,7 +1,7 @@
-function fpaDemo(para = [3, 0.8]) {
+function fpaDemo(para = [20, 0.8]) {
     const n = para[0];  // ukuran populasi
     const p = para[1];  // switch Probability 
-    const N_iter = 10;  // Iterasi
+    const N_iter = 100;  // Iterasi
 
     const d = 3;
     const Lb = Array(d).fill(-2);
@@ -12,23 +12,23 @@ function fpaDemo(para = [3, 0.8]) {
 
     for (let i = 0; i < n; i++) {
         Sol[i] = Lb.map((lb, index) => lb + (Ub[index] - lb) * Math.random());
-        console.log(`nilai Solusi ke ${i+1} = ${Sol[i]}`);
+        // console.log(`nilai Solusi ke ${i+1} = ${Sol[i]}`);
         Fitness[i] = Fun(Sol[i]);
-        console.log(`nilai fitnes ke ${i+1} = ${Fitness[i]}`);
+        // console.log(`nilai fitnes ke ${i+1} = ${Fitness[i]}`);
     }
 
 
-    console.log(`Solusi = ${Sol}`);
+    // console.log(`Solusi = ${Sol}`);
     let fmin = Math.min(...Fitness); //mendapatkan nilai fitnes terkecil dari setiap fitnes dalam populasi
-    console.log(`\nnilai Fitnes Min: ${fmin}`);
+    // console.log(`\nnilai Fitnes Min: ${fmin}`);
     let best = Sol[Fitness.indexOf(fmin)];  //mendapatkan nilai solusi dari fitnes terkecil
-    console.log(`\nnilai best: ${best}`);
+    // console.log(`\nnilai best: ${best}`);
     let S = [...Sol];
-    console.log(`\n Solusi: ${S}\n========================================================================================================================================`);
+    // console.log(`\n Solusi: ${S}\n========================================================================================================================================`);
 
     for (let t = 0; t < N_iter; t++) {
         for (let i = 0; i < n; i++) {
-            console.log(`\niterasi ${t+1} --- populasi ${i+1}`);
+            // console.log(`\niterasi ${t+1} --- populasi ${i+1}`);
             let randomP = Math.random();
             // console.log(`\nnilai random p = ${randomP}`);
             if (randomP < p) { 
@@ -40,38 +40,39 @@ function fpaDemo(para = [3, 0.8]) {
                 S[i] = Sol[i].map((sol, index) => sol + dS[index]);
                 // console.log(`\nNilai S-${i} = ${S[i]}`);
                 S[i] = simpleBounds(S[i], Lb, Ub);
-                console.log(`Global Pollination\nNilai Sol[${t}, ${i}] = ${S[i]}`);
+                // console.log(`Global Pollination\nNilai Sol[${t}, ${i}] = ${S[i]}`);
             } else {
                 let epsilon = Math.random();
                 let JK = shuffle([...Array(n).keys()]);
                 S[i] = S[i].map((s, index) => s + epsilon * (Sol[JK[0]][index] - Sol[JK[1]][index]));
                 S[i] = simpleBounds(S[i], Lb, Ub);
-                console.log(`\nLocal Pollination\nNilai Sol[${t}, ${i}] = ${S[i]}`);
+                // console.log(`\nLocal Pollination\nNilai Sol[${t}, ${i}] = ${S[i]}`);
             }
             let Fnew = Fun(S[i]);
-            console.log(`----------------------------------------------------------------`)
-            console.log(`nilai Fitnes [${t}, ${i}] = ${Fitness[i]}`);
-            console.log(`nilai Fnew [${t}, ${i}] = ${Fnew}`);
-            console.log(`nilai Fmin [${t}, ${i}] = ${fmin}`);
-            console.log(`----------------------------------------------------------------`)
+            // console.log(`----------------------------------------------------------------`)
+            // console.log(`nilai Fitnes [${t}, ${i}] = ${Fitness[i]}`);
+            // console.log(`nilai Fnew [${t}, ${i}] = ${Fnew}`);
+            // console.log(`nilai Fmin [${t}, ${i}] = ${fmin}`);
+            // console.log(`----------------------------------------------------------------`)
             if (Fnew <= Fitness[i]) {
-                console.log(`\nEvaluasi solusi baru\n Fnew <= Fitness?\n Fitness == Fnew`)
+                // console.log(`\nEvaluasi solusi baru\n Fnew <= Fitness?\n Fitness == Fnew`)
                 Sol[i] = [...S[i]];
                 Fitness[i] = Fnew;
                 // console.log(`nilai Fnew [${t}, ${i}] = ${Fnew}`);
-                console.log(`nilai Sol [${t}, ${i}] = ${Sol[i]}`);
-                console.log(`nilai new [${t}, ${i}] = ${Fitness[i]}`);
+                // console.log(`nilai Sol [${t}, ${i}] = ${Sol[i]}`);
+                // console.log(`nilai new [${t}, ${i}] = ${Fitness[i]}`);
             }
             // console.log(`----------------------------------------------------------------`)
             // console.log(`\nnilai Fitnes min ${fmin}`);
             // console.log(`----------------------------------------------------------------`)
             if (Fnew <= fmin) {
-                console.log(`perbarui global best\n Fnew <= fmin?\n fmin == Fnew`)
+                // console.log(`perbarui global best\n Fnew <= fmin?\n fmin == Fnew`)
                 best = [...S[i]];
                 fmin = Fnew;
-                console.log(`nilai best [${t}, ${i}] = ${best}`);
-                console.log(`nilai Fnew [${t}, ${i}] = ${Fnew}`);
+                // console.log(`nilai best [${t}, ${i}] = ${best}`);
+                // console.log(`nilai Fnew [${t}, ${i}] = ${Fnew}`);
             }
+            console.log(`iterasi ${t+1} populasi ${i+1} || best solusi : ${Sol[i]} || Fmin = ${fmin}`);
             // console.log(`nilai Fitnes [${t}, ${i}] = ${Fitness[i]}`);
             // console.log(`Iterasi ${t} Populasi ${i} Posisi terbaik ${best} nilai fungsi baru ${Fnew}`)
         }
@@ -97,6 +98,8 @@ function Levy(d) {
     return u.map((ui, i) => 0.01 * ui / Math.pow(Math.abs(v[i]), 1 / beta));
 }
 
+
+// fungsi rosenbrock
 function Fun(u) {
     return Math.pow(1 - u[0], 2) + 100 * Math.pow(u[1] - Math.pow(u[0], 2), 2) + 100 * Math.pow(u[2] - Math.pow(u[1], 2), 2);
 }
